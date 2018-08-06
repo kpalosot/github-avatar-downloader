@@ -41,7 +41,7 @@ function callback(err, res, body){
   request(newOptions, (err, res, body) => {
     var newInfo = JSON.parse(body);
     for(var item of newInfo){
-      request(item.avatar_url).pipe(fs.createWriteStream(item.login));
+      request(item.avatar_url).pipe(fs.createWriteStream(`./avatars/${item.login}`));
     }
   });
 
