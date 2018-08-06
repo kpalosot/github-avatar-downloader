@@ -1,12 +1,6 @@
 var myArgs = process.argv.slice(2);
 const fs = require("fs");
-//const https = require("https");
 const request = require("request");
-
-// const client_id = "Iv1.96214668bb039dda";
-// const client_secret = "9898512b97a5a458181b5565627af689de8f00ef";
-
-// const app = require('express')();
 
 // WORKING CODE FOR MAKING DIRECTORIES
 fs.mkdir("./avatars", err =>{
@@ -24,10 +18,11 @@ var options ={
   }
 };
 
-function callback(err, res, body){
+function getContributors(err, res, body){
   if(err){
     console.error(err);
   }
+
   let info = JSON.parse(body);
   options.url = info.contributors_url;
 
@@ -38,16 +33,18 @@ function callback(err, res, body){
     }
   };
 
-  request(newOptions, (err, res, body) => {
-    var newInfo = JSON.parse(body);
-    for(var item of newInfo){
-      request(item.avatar_url).pipe(fs.createWriteStream(`./avatars/${item.login}`));
-    }
-  });
+  request(newOptions, getAvatars);
 
 }
 
-request(options, callback);
+function getAvatars(err, res, body){
+  var info = JSON.parse(body);
+  for(var item of info){
+    request(item.avatar_url).pipe(fs.createWriteStream(`./avatars/${item.login}`));
+  }
+}
+
+request(options, getContributors);
 
 
 
